@@ -29,7 +29,7 @@ class Dispersion {
   /// Computes expected value for all possible [values] of a random number
   /// for finite case with its probabilities
   double? expectedValue() =>
-      (values * probabilities).reduce((f, s) => f! + s!) as double?;
+      (values * probabilities)?.reduce((f, s) => f! + s!) as double?;
 
   /// Computes `population` or `sample` [type]s of standard deviation of
   /// [values]
@@ -47,8 +47,8 @@ class Dispersion {
         return summ / (values.itemsCount - 1);
       default:
         final summ = (values.map((v) => pow(v!, 2)) * probabilities)
-            .reduce((f, s) => f! + s!)!;
-        return summ - (pow(mu!, 2) as double);
+            ?.reduce((f, s) => f! + s!)!;
+        return summ! - (pow(mu!, 2) as double);
     }
   }
 
