@@ -85,7 +85,7 @@ class NewtonsMethod {
 
   /// Counting Lowest limit for negative roots
   num lowerLimit() {
-    final helpArray = List<num?>(_equationCoef.length);
+    final helpArray = List<num?>.filled(_equationCoef.length, null);
     for (var i = 0; i < _equationCoef.length; i++) {
       if (_equationPower[i] % 2 == 0) {
         helpArray[i] = _equationCoef[i];

@@ -449,9 +449,9 @@ class Matrix extends TensorBase {
     final v = SquareMatrix.generate(n).data;
 
     // array for internal storage of singular values
-    final s = List<num?>(min(m + 1, n));
-    final e = List<num?>(n);
-    final work = List<num?>(m);
+    final s = List<num?>.filled(min(m + 1, n), null);
+    final e = List<num?>.filled(n, null);
+    final work = List<num?>.filled(m, null);
     bool wantu = true;
     bool wantv = true;
 
@@ -474,9 +474,9 @@ class Matrix extends TensorBase {
             s[k] = -s[k]!;
           }
           for (int i = k; i < m; i++) {
-            a[i][k] /= s[k]!;
+            a[i][k] = a[i][k]! / s[k]!;
           }
-          a[k][k] += 1.0;
+          a[k][k] = a[k][k]! + 1.0;
         }
         s[k] = -s[k]!;
       }
@@ -490,7 +490,7 @@ class Matrix extends TensorBase {
           }
           t = -t / a[k][k]!;
           for (int i = k; i < m; i++) {
-            a[i][j] += t * a[i][k]!;
+            a[i][j] = a[i][j]! + (t * a[i][k]!);
           }
         }
 
@@ -520,9 +520,9 @@ class Matrix extends TensorBase {
             e[k] = -e[k]!;
           }
           for (int i = k + 1; i < n; i++) {
-            e[i] /= e[k]!;
+            e[i] = e[i]! / e[k]!;
           }
-          e[k + 1] += 1.0;
+          e[k + 1] = e[k + 1]! + 1.0;
         }
         e[k] = -e[k]!;
         if ((k + 1 < m) && (e[k] != 0.0)) {
@@ -533,13 +533,13 @@ class Matrix extends TensorBase {
           }
           for (int j = k + 1; j < n; j++) {
             for (int i = k + 1; i < m; i++) {
-              work[i] += e[j]! * a[i][j]!;
+              work[i] = work[i]! + (e[j]! * a[i][j]!);
             }
           }
           for (int j = k + 1; j < n; j++) {
             double t = -e[j]! / e[k + 1]!;
             for (int i = k + 1; i < m; i++) {
-              a[i][j] += t * work[i]!;
+              a[i][j] = a[i][j]! + (t * work[i]!);
             }
           }
         }
@@ -586,7 +586,7 @@ class Matrix extends TensorBase {
             }
             t = -t / u[k][k]!;
             for (int i = k; i < m; i++) {
-              u[i][j] += t * u[i][k]!;
+              u[i][j] = u[i][j]! + (t * u[i][k]!);
             }
           }
           for (int i = k; i < m; i++) {
@@ -617,7 +617,7 @@ class Matrix extends TensorBase {
             }
             t = -t / v[k + 1][k]!;
             for (int i = k + 1; i < n; i++) {
-              v[i][j] += t * v[i][k]!;
+              v[i][j] = v[i][j]! + (t * v[i][k]!);
             }
           }
         }
@@ -745,7 +745,11 @@ class Matrix extends TensorBase {
             // Calculate the shift.
 
             double scale = max(
-                max(max(max(s[p - 1]!.abs() as double, s[p - 2]!.abs() as double), e[p - 2]!.abs() as double),
+                max(
+                    max(
+                        max(s[p - 1]!.abs() as double,
+                            s[p - 2]!.abs() as double),
+                        e[p - 2]!.abs() as double),
                     s[k]!.abs() as double),
                 e[k]!.abs() as double);
             double sp = s[p - 1]! / scale;
@@ -897,7 +901,8 @@ class Matrix extends TensorBase {
           }
           r.setItem(k, i, ss);
           for (var j = 1; j <= rows; j++) {
-            a.setItem(j, i, a.itemAt(j, i)! - r.itemAt(k, i)! * q.itemAt(j, k)!);
+            a.setItem(
+                j, i, a.itemAt(j, i)! - r.itemAt(k, i)! * q.itemAt(j, k)!);
           }
         }
       }

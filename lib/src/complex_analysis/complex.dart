@@ -116,7 +116,7 @@ class Complex with CopyableMixin<Complex> {
     Complex? tmpI = copy();
 
     for (var i = 1; i < power.abs(); i++) {
-      tmpI *= this;
+      tmpI = tmpI! * this;
     }
 
     if (power < 0) {

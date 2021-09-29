@@ -34,7 +34,8 @@ class CentralTendency {
           'Items count of weights don\'t match set of numbers!');
     }
 
-    set *= w;
+    TensorBase? newSet = set * w;
+    set = newSet!;
 
     return set.reduce((f, s) => f! + s!)! / w.reduce((f, s) => f! + s!)!;
   }
@@ -107,8 +108,9 @@ class CentralTendency {
       return geometric();
     }
 
-    final underRoot = _set!.map((n) => pow(n!, degree)).reduce((f, s) => f! + s!)! /
-        _set!.itemsCount;
+    final underRoot =
+        _set!.map((n) => pow(n!, degree)).reduce((f, s) => f! + s!)! /
+            _set!.itemsCount;
     return Number(underRoot).rootOf(degree).toDouble();
   }
 

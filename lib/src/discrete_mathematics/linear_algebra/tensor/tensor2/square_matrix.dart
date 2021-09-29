@@ -178,7 +178,7 @@ class SquareMatrix extends Matrix {
     /** Arrays for internal storage of eigenvalues.
    @serial internal storage of eigenvalues.
    */
-    List<num?> d, e;
+    late List<num?> d, e;
 
     /** Array for internal storage of eigenvectors.
    @serial internal storage of eigenvectors.
@@ -232,8 +232,8 @@ class SquareMatrix extends Matrix {
           // Generate Householder vector.
 
           for (int k = 0; k < i; k++) {
-            d[k] /= scale;
-            h += d[k]! * d[k]!;
+            d[k] = d[k]! / scale;
+            h = h + (d[k]! * d[k]!);
           }
           double f = d[i - 1] as double;
           double? g = sqrt(h);
@@ -254,25 +254,25 @@ class SquareMatrix extends Matrix {
             V[j][i] = f;
             g = e[j]! + V[j][j]! * f;
             for (int k = j + 1; k <= i - 1; k++) {
-              g += V[k][j]! * d[k]!;
-              e[k] += V[k][j]! * f;
+              g = g! + (V[k][j]! * d[k]!);
+              e[k] = e[k]! + (V[k][j]! * f);
             }
             e[j] = g;
           }
           f = 0.0;
           for (int j = 0; j < i; j++) {
-            e[j] /= h;
-            f += e[j]! * d[j]!;
+            e[j] = e[j]! / h;
+            f = f + (e[j]! * d[j]!);
           }
           double hh = f / (h + h);
           for (int j = 0; j < i; j++) {
-            e[j] -= hh * d[j]!;
+            e[j] = e[j]! - (hh * d[j]!);
           }
           for (int j = 0; j < i; j++) {
             f = d[j] as double;
             g = e[j] as double?;
             for (int k = j; k <= i - 1; k++) {
-              V[k][j] -= (f * e[k]! + g! * d[k]!);
+              V[k][j] = V[k][j]! - (f * e[k]! + g! * d[k]!);
             }
             d[j] = V[i - 1][j];
             V[i][j] = 0.0;
@@ -297,7 +297,7 @@ class SquareMatrix extends Matrix {
               g += V[k][i + 1]! * V[k][j]!;
             }
             for (int k = 0; k <= i; k++) {
-              V[k][j] -= g * d[k]!;
+              V[k][j] = V[k][j]! - (g * d[k]!);
             }
           }
         }
@@ -362,7 +362,7 @@ class SquareMatrix extends Matrix {
             double dl1 = d[l + 1] as double;
             double h = g - d[l]!;
             for (int i = l + 2; i < n; i++) {
-              d[i] -= h;
+              d[i] = d[i]! - h;
             }
             f = f + h;
 
@@ -474,7 +474,7 @@ class SquareMatrix extends Matrix {
             }
             f = f / h;
             for (int i = m; i <= high; i++) {
-              H[i][j] -= f * ort[i]!;
+              H[i][j] = H[i][j]! - (f * ort[i]!);
             }
           }
 
@@ -485,7 +485,7 @@ class SquareMatrix extends Matrix {
             }
             f = f / h;
             for (int j = m; j <= high; j++) {
-              H[i][j] -= f * ort[j]!;
+              H[i][j] = H[i][j]! - (f * ort[j]!);
             }
           }
           ort[m] = scale * ort[m]!;
@@ -514,7 +514,7 @@ class SquareMatrix extends Matrix {
             // Double division avoids possible underflow
             g = (g / ort[m]!) / H[m][m - 1]!;
             for (int i = m; i <= high; i++) {
-              V[i][j] += g * ort[i]!;
+              V[i][j] = V[i][j]! + (g * ort[i]!);
             }
           }
         }
@@ -685,7 +685,7 @@ class SquareMatrix extends Matrix {
           if (iter == 10) {
             exshift += x!;
             for (int i = low; i <= inn; i++) {
-              H[i][i] -= x;
+              H[i][i] = H[i][i]! - x;
             }
             s = H[inn][inn - 1]!.abs() + H[inn - 1][inn - 2]!.abs();
             x = y = 0.75 * s;
@@ -704,7 +704,7 @@ class SquareMatrix extends Matrix {
               }
               s = x - w / ((y - x) / 2.0 + s);
               for (int i = low; i <= inn; i++) {
-                H[i][i] -= s;
+                H[i][i] = H[i][i]! - s;
               }
               exshift += s;
               x = y = w = 0.964;
@@ -893,7 +893,8 @@ class SquareMatrix extends Matrix {
             H[inn - 1][inn - 1] = q / H[inn][inn - 1]!;
             H[inn - 1][inn] = -(H[inn][inn]! - p!) / H[inn][inn - 1]!;
           } else {
-            cdiv(0.0, -H[inn - 1][inn]! as double, H[inn - 1][inn - 1]! - (p as double), q as double);
+            cdiv(0.0, -H[inn - 1][inn]! as double,
+                H[inn - 1][inn - 1]! - (p as double), q as double);
             H[inn - 1][inn - 1] = cdivr;
             H[inn - 1][inn] = cdivi;
           }
@@ -924,22 +925,27 @@ class SquareMatrix extends Matrix {
 
                 x = H[i][i + 1];
                 y = H[i + 1][i];
-                vr = (d[i]! - p) * (d[i]! - p) + e[i]! * e[i]! - q * (q as double);
+                vr = (d[i]! - p) * (d[i]! - p) +
+                    e[i]! * e[i]! -
+                    q * (q as double);
                 vi = (d[i]! - p) * 2.0 * q;
                 if (vr == 0.0 && vi == 0.0) {
                   vr = eps *
                       norm *
                       (w.abs() + q.abs() + x!.abs() + y!.abs() + z!.abs());
                 }
-                cdiv(x! * r! - z! * ra + q * sa, x * s! - z * sa - q * ra, vr, vi);
+                cdiv(x! * r! - z! * ra + q * sa, x * s! - z * sa - q * ra, vr,
+                    vi);
                 H[i][inn - 1] = cdivr;
                 H[i][inn] = cdivi;
                 if (x.abs() > (z.abs() + q.abs())) {
                   H[i + 1][inn - 1] =
                       (-ra - w * H[i][inn - 1]! + q * H[i][inn]!) / x;
-                  H[i + 1][inn] = (-sa - w * H[i][inn]! - q * H[i][inn - 1]!) / x;
+                  H[i + 1][inn] =
+                      (-sa - w * H[i][inn]! - q * H[i][inn - 1]!) / x;
                 } else {
-                  cdiv(-r - y! * (H[i][inn - 1] as double), -s - y * (H[i][inn] as double), z as double, q);
+                  cdiv(-r - y! * (H[i][inn - 1] as double),
+                      -s - y * (H[i][inn] as double), z as double, q);
                   H[i + 1][inn - 1] = cdivr;
                   H[i + 1][inn] = cdivi;
                 }
@@ -994,8 +1000,8 @@ class SquareMatrix extends Matrix {
     final A = data;
     n = columns;
     V = SquareMatrix.generate(n).data;
-    d = List<double?>(n);
-    e = List<double?>(n);
+    d = List<double?>.filled(n, null);
+    e = List<double?>.filled(n, null);
 
     issymmetric = true;
     for (int j = 0; (j < n) & issymmetric; j++) {
@@ -1018,7 +1024,7 @@ class SquareMatrix extends Matrix {
       tql2();
     } else {
       H = SquareMatrix.generate(n).data;
-      ort = List<double?>(n);
+      ort = List<double?>.filled(n, null);
 
       for (int j = 0; j < n; j++) {
         for (int i = 0; i < n; i++) {
@@ -1139,8 +1145,10 @@ class SquareMatrix extends Matrix {
       for (var r = c + 1; r <= rows; r++) {
         final divide = thisCopy.itemAt(r, c)! / thisCopy.itemAt(c, c)!;
         lower.setItem(r, c, divide);
-        thisCopy.replaceRow(r,
-            ((thisCopy.rowAsVector(c) * -divide)! + thisCopy.rowAsVector(r)).data);
+        thisCopy.replaceRow(
+            r,
+            ((thisCopy.rowAsVector(c) * -divide)! + thisCopy.rowAsVector(r))
+                .data);
       }
     }
 
@@ -1230,9 +1238,9 @@ class SquareMatrix extends Matrix {
       final choosedRow = eliminatedMatrix.rowAt(i);
 
       for (var j = i - 1; j >= 1; j--) {
-        final tmpRow =
-            Vector(choosedRow).map((v) => v! * -eliminatedMatrix.itemAt(j, i)!) +
-                Vector(eliminatedMatrix.rowAt(j));
+        final tmpRow = Vector(choosedRow)
+                .map((v) => v! * -eliminatedMatrix.itemAt(j, i)!) +
+            Vector(eliminatedMatrix.rowAt(j));
 
         result[j - 1] += result[i - 1] * -eliminatedMatrix.itemAt(j, i)!;
         eliminatedMatrix.replaceRow(j, tmpRow.data);
