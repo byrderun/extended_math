@@ -43,12 +43,12 @@ class CubicEquation extends EquationBase {
   }
 
   @override
-  Map<String, Complex> calculate() {
-    final result = <String, Complex>{};
+  Map<String, Complex?> calculate() {
+    final result = <String, Complex?>{};
     final dis = discriminant();
 
     if (d != 0) {
-      final possibleX = Integer(d).factorizate();
+      final possibleX = Integer(d as int).factorizate();
       possibleX.add(1);
 
       for (var item in possibleX) {
@@ -72,8 +72,8 @@ class CubicEquation extends EquationBase {
       result['x1'] = Complex(re: x);
     }
 
-    final tmpB = result['x1'] * a + b;
-    final tmpC = result['x1'] * tmpB + c;
+    final tmpB = ((result['x1']! * a)! + b)!;
+    final tmpC = ((result['x1']! * tmpB)! + c)!;
 
     final quadratic =
         QuadraticEquation(a: a, b: tmpB.toReal(), c: tmpC.toReal());

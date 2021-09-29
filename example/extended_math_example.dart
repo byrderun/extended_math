@@ -4,7 +4,7 @@ void main() {
   final v1 = Vector(<double>[1, 2, 3]);
   final v2 = Vector(<double>[4, 5, 6]);
   // Multiply vectors
-  final double res = v1.dot(v2);
+  final double? res = v1.dot(v2) as double?;
   // Add vectors
   final Vector res1 = v1 + v2;
 
@@ -19,10 +19,10 @@ void main() {
     <double>[-1, -8, 1]
   ]);
   // Gets determinant of matrix
-  final double det = v3.determinant();
+  final double? det = v3.determinant() as double?;
 
   // Computes eigenvalues and eigenvectors of square matrix
-  final Map<num, Vector> result = v3.eigen();
+  final Map<num?, Vector> result = v3.eigen();
 
   final m = Matrix(<List<double>>[
     <double>[2, -1, 5],

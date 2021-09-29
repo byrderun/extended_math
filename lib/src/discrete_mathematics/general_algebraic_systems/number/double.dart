@@ -8,10 +8,10 @@ import 'base/number.dart';
 /// methods that don't exist in.
 class Double extends Number {
   /// Creates instance of [Double] number
-  const Double(double value) : super(value);
+  const Double(double? value) : super(value);
 
   @override
-  double get data => super.data.toDouble();
+  double get data => super.data!.toDouble();
 
   /// Returns [Double] number precised to [count] number after point
   ///

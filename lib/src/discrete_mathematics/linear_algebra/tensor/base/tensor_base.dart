@@ -27,22 +27,22 @@ abstract class TensorBase with CopyableMixin<TensorBase> {
       Map<String, int> shape, num Function(num number) generator) {
     switch (shape.length) {
       case 1:
-        return Vector(List<num>.generate(shape['width'], generator));
+        return Vector(List<num>.generate(shape['width']!, generator));
       case 2:
-        final row = List<num>.generate(shape['width'], generator);
-        return Matrix(List<List<num>>.generate(shape['length'], (_) => row));
+        final row = List<num>.generate(shape['width']!, generator);
+        return Matrix(List<List<num>>.generate(shape['length']!, (_) => row));
       case 3:
-        final depth = List<num>.generate(shape['depth'], generator);
-        final width = List<List<num>>.generate(shape['width'], (_) => depth);
+        final depth = List<num>.generate(shape['depth']!, generator);
+        final width = List<List<num>>.generate(shape['width']!, (_) => depth);
         return Tensor3(
-            List<List<List<num>>>.generate(shape['length'], (_) => width));
+            List<List<List<num>>>.generate(shape['length']!, (_) => width));
       case 4:
-        final depth2 = List<num>.generate(shape['depth2'], generator);
-        final depth = List<List<num>>.generate(shape['depth'], (_) => depth2);
+        final depth2 = List<num>.generate(shape['depth2']!, generator);
+        final depth = List<List<num>>.generate(shape['depth']!, (_) => depth2);
         final width =
-            List<List<List<num>>>.generate(shape['width'], (_) => depth);
+            List<List<List<num>>>.generate(shape['width']!, (_) => depth);
         return Tensor4(List<List<List<List<num>>>>.generate(
-            shape['length'], (_) => width));
+            shape['length']!, (_) => width));
       default:
         return Number(generator(1));
     }
@@ -55,7 +55,7 @@ abstract class TensorBase with CopyableMixin<TensorBase> {
   int get itemsCount;
 
   /// Gets data of this tensor
-  Object get data;
+  Object? get data;
 
   /// Gets shape of this tensor
   ///
@@ -64,22 +64,22 @@ abstract class TensorBase with CopyableMixin<TensorBase> {
   Map<String, int> get shape;
 
   /// Reduces data to number with provided [f] reduce function
-  num reduce(num Function(num prev, num next) f);
+  num? reduce(num Function(num? prev, num? next) f);
 
   /// Tests if any number of data satisfies test function [f]
-  bool any(bool Function(num number) f);
+  bool any(bool Function(num? number) f);
 
   /// Tests if every number of data satisfies test function [f]
-  bool every(bool Function(num number) f);
+  bool every(bool Function(num? number) f);
 
   /// Transform each element of data and return transformed data
-  TensorBase map(num Function(num number) f);
+  TensorBase map(num Function(num? number) f);
 
   /// Converts this tensor to [Number] if dimension is equal to 0,
   /// otherwise throws [TensorException]
   Number toScalar() {
     if (dimension == 0) {
-      return Number(data);
+      return Number(data as num?);
     } else {
       throw TensorException('Tensor cannot be converted to Number, because '
           'dimension of this tensor isn\'t equal to 0!');
@@ -90,7 +90,7 @@ abstract class TensorBase with CopyableMixin<TensorBase> {
   /// otherwise throws [TensorException]
   Vector toVector() {
     if (dimension == 1) {
-      return Vector(data);
+      return Vector(data as List<num?>?);
     } else {
       throw TensorException('Tensor cannot be converted to Vector, because '
           'dimension of this tensor isn\'t equal to 1!');
@@ -101,7 +101,7 @@ abstract class TensorBase with CopyableMixin<TensorBase> {
   /// otherwise throws [TensorException]
   Matrix toMatrix() {
     if (dimension == 2) {
-      return Matrix(data);
+      return Matrix(data as List<List<num?>>?);
     } else {
       throw TensorException('Tensor cannot be converted to Matrix, because '
           'dimension of this tensor isn\'t equal to 2!');
@@ -112,7 +112,7 @@ abstract class TensorBase with CopyableMixin<TensorBase> {
   /// otherwise throws [TensorException]
   Tensor3 toTensor3() {
     if (dimension == 3) {
-      return Tensor3(data);
+      return Tensor3(data as List<List<List<num>>>?);
     } else {
       throw TensorException('Tensor cannot be converted to Tensor3, because '
           'dimension of this tensor isn\'t equal to 3!');
@@ -123,7 +123,7 @@ abstract class TensorBase with CopyableMixin<TensorBase> {
   /// otherwise throws [TensorException]
   Tensor4 toTensor4() {
     if (dimension == 4) {
-      return Tensor4(data);
+      return Tensor4(data as List<List<List<List<num>>>>?);
     } else {
       throw TensorException('Tensor cannot be converted to Tensor4, because '
           'dimension of this tensor isn\'t equal to 4!');
@@ -136,13 +136,13 @@ abstract class TensorBase with CopyableMixin<TensorBase> {
   /// Constructs new data points within the range of a discrete set
   /// of known data points [a] (alpha) may be in range from 0 to 1
   /// inclusively. Otherwise throws [TensorException].
-  TensorBase lerp(TensorBase other, double a) {
+  TensorBase? lerp(TensorBase other, double a) {
     if (dimension != other.dimension && !mapsEqual(shape, other.shape)) {
       throw ArgumentError('Tensors aren\'t equals!');
     }
 
     if (a >= 0 && a <= 1) {
-      return copy() * (1 - a) + other * a;
+      return (copy() * (1 - a))! + other * a;
     } else {
       throw TensorException(
           'Calculated tensor isn\'t within the range of a discrete '
@@ -152,13 +152,13 @@ abstract class TensorBase with CopyableMixin<TensorBase> {
   }
 
   /// Converts tensor to one dimensional list
-  List<num> toList();
+  List<num?> toList();
 
   /// Performs addition this and [other]
-  TensorBase operator +(covariant Object other);
+  TensorBase? operator +(covariant Object? other);
 
   /// Performs subtraction [other] from this
-  TensorBase operator -(covariant Object other);
+  TensorBase? operator -(covariant Object other);
 
   /// Unary minus
   TensorBase operator -();
@@ -166,10 +166,10 @@ abstract class TensorBase with CopyableMixin<TensorBase> {
   /// Multiplies this by [other]
   ///
   /// Hadamard product algorithm is used.
-  TensorBase operator *(covariant Object other);
+  TensorBase? operator *(covariant Object other);
 
   /// Divides this by [other]
-  TensorBase operator /(covariant Object other);
+  TensorBase? operator /(covariant Object other);
 
   @override
   bool operator ==(Object other) =>

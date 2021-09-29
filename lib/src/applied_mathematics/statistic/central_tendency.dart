@@ -15,18 +15,18 @@ class CentralTendency {
   const CentralTendency(this._set);
 
   /// Set of numbers
-  final TensorBase _set;
+  final TensorBase? _set;
 
   /// Computes arithmetic mean of set numbers
   ///
   /// If [weights] isn't `null` then the weighted arithmetic mean are computed.
   /// If provided, [weights] must have the same shape as the number's set.
-  num arithmetic({TensorBase weights}) {
-    if (_set.any((e) => e <= 0)) {
+  num arithmetic({TensorBase? weights}) {
+    if (_set!.any((e) => e! <= 0)) {
       throw MeanException('All numbers in set must be greatest than zero!');
     }
 
-    var set = _set.copy();
+    TensorBase set = _set!.copy();
     final w = weights ?? TensorBase.generate(set.shape, (_) => 1);
 
     if (!mapsEqual(set.shape, w.shape)) {
@@ -36,19 +36,19 @@ class CentralTendency {
 
     set *= w;
 
-    return set.reduce((f, s) => f + s) / w.reduce((f, s) => f + s);
+    return set.reduce((f, s) => f! + s!)! / w.reduce((f, s) => f! + s!)!;
   }
 
   /// Computes geometric mean of set numbers
   ///
   /// If [weights] isn't `null` then the weighted geometric mean are computed.
   /// If provided, [weights] must have the same shape as the number's set.
-  num geometric({TensorBase weights}) {
-    if (_set.any((e) => e <= 0)) {
+  num geometric({TensorBase? weights}) {
+    if (_set!.any((e) => e! <= 0)) {
       throw MeanException('All numbers in set must be greatest than zero!');
     }
 
-    final set = _set.copy();
+    final TensorBase set = _set!.copy();
     final w = weights ?? TensorBase.generate(set.shape, (_) => 1);
 
     if (!mapsEqual(set.shape, w.shape)) {
@@ -56,27 +56,27 @@ class CentralTendency {
           'Items count of weights don\'t match set of numbers!');
     }
 
-    final root = w.reduce((f, s) => f + s);
+    final root = w.reduce((f, s) => f! + s!);
     final setList = set.toList();
     final wList = w.toList();
 
     for (var i = 0; i < setList.length; i++) {
-      setList[i] = pow(setList[i], wList[i]);
+      setList[i] = pow(setList[i]!, wList[i]!);
     }
 
-    return Number(setList.reduce((f, s) => f * s)).rootOf(root).toDouble();
+    return Number(setList.reduce((f, s) => f! * s!)).rootOf(root).toDouble();
   }
 
   /// Computes harmonic mean of set numbers
   ///
   /// If [weights] isn't `null` then the weighted harmonic mean are computed.
   /// If provided, [weights] must have the same shape as the number's set.
-  num harmonic({TensorBase weights}) {
-    if (_set.any((e) => e <= 0)) {
+  num harmonic({TensorBase? weights}) {
+    if (_set!.any((e) => e! <= 0)) {
       throw MeanException('All numbers in set must be greatest than zero!');
     }
 
-    final set = _set.copy();
+    final TensorBase set = _set!.copy();
     final w = weights ?? TensorBase.generate(set.shape, (_) => 1);
 
     if (!mapsEqual(set.shape, w.shape)) {
@@ -88,10 +88,10 @@ class CentralTendency {
     final wList = w.toList();
 
     for (var i = 0; i < setList.length; i++) {
-      setList[i] = wList[i] / setList[i];
+      setList[i] = wList[i]! / setList[i]!;
     }
 
-    return w.reduce((f, s) => f + s) / setList.reduce((f, s) => f + s);
+    return w.reduce((f, s) => f! + s!)! / setList.reduce((f, s) => f! + s!)!;
   }
 
   /// Computes quadratic mean of set numbers
@@ -99,7 +99,7 @@ class CentralTendency {
 
   /// Computes generalized (power) mean of set numbers with [degree] (p)
   num generalized(int degree) {
-    if (_set.any((e) => e <= 0)) {
+    if (_set!.any((e) => e! <= 0)) {
       throw MeanException('All numbers in set must be greatest than zero!');
     }
 
@@ -107,44 +107,44 @@ class CentralTendency {
       return geometric();
     }
 
-    final underRoot = _set.map((n) => pow(n, degree)).reduce((f, s) => f + s) /
-        _set.itemsCount;
+    final underRoot = _set!.map((n) => pow(n!, degree)).reduce((f, s) => f! + s!)! /
+        _set!.itemsCount;
     return Number(underRoot).rootOf(degree).toDouble();
   }
 
   /// Gets minima of the set of numbers - equivalent to [generalized] with
   /// degree equal to `-Infinity`
-  num minimum() {
-    final list = _set.toList()..sort();
+  num? minimum() {
+    final list = _set!.toList()..sort();
     return list.first;
   }
 
   /// Gets maxima of the set of numbers - equivalent to [generalized] with
   /// degree equal to `Infinity`
-  num maximum() {
-    final list = _set.toList()..sort();
+  num? maximum() {
+    final list = _set!.toList()..sort();
     return list.last;
   }
 
   /// Gets the value separating the higher half from the lower half
   /// of a [_set]
-  num median() {
-    final list = _set.toList()..sort();
+  num? median() {
+    final list = _set!.toList()..sort();
     final center = list.length ~/ 2;
     if (list.length % 2 == 0) {
-      return (list.elementAt(center - 1) + list.elementAt(center)) / 2;
+      return (list.elementAt(center - 1)! + list.elementAt(center)!) / 2;
     } else {
       return list.elementAt(center);
     }
   }
 
   /// Gets most often appeared values of the [_set]
-  Set<num> mode() {
-    final list = _set.toList();
+  Set<num?> mode() {
+    final list = _set!.toList();
     final numbers = list.toSet();
 
-    final result = <num>{};
-    final maxCount = <num, int>{};
+    final result = <num?>{};
+    final maxCount = <num?, int>{};
 
     for (final item in numbers) {
       maxCount[item] = list.where((e) => e == item).length;

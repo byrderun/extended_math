@@ -21,19 +21,19 @@ class Tensor4 extends TensorBase {
       }, generator)
           .toTensor4();
 
-  final List<List<List<List<num>>>> _data;
+  final List<List<List<List<num>>>>? _data;
 
   /// Gets width (columns) of this tensor
-  int get width => _data[0].length;
+  int get width => _data![0].length;
 
   /// Gets length (rows) of this tensor
-  int get length => _data.length;
+  int get length => _data!.length;
 
   /// Gets depth of this tensor
-  int get depth => _data[0][0].length;
+  int get depth => _data![0][0].length;
 
   /// Gets depth2 of this tensor
-  int get depth2 => _data[0][0][0].length;
+  int get depth2 => _data![0][0][0].length;
 
   @override
   int get itemsCount => width * length * depth * depth2;
@@ -47,7 +47,7 @@ class Tensor4 extends TensorBase {
       };
 
   @override
-  List<List<List<List<num>>>> get data => _data
+  List<List<List<List<num>>>> get data => _data!
       .map((r) => r.map((c) => c.map((h) => h.toList()).toList()).toList())
       .toList();
 
@@ -116,20 +116,20 @@ class Tensor4 extends TensorBase {
   ///
   /// All position may be in range from 1 to end inclusively.
   num setItem(int length, int width, int depth, int depth2, num value) =>
-      _data[length - 1][width - 1][depth - 1][depth2 - 1] = value;
+      _data![length - 1][width - 1][depth - 1][depth2 - 1] = value;
 
   /// Add values of [other] to corresponding values of this tensor
   ///
   /// The tensors should be of the same dimension.
   @override
-  Tensor4 operator +(Tensor4 other) {
+  Tensor4 operator +(Tensor4? other) {
     final t4 = copy();
     for (var l = 1; l <= length; l++) {
       for (var w = 1; w <= width; w++) {
         for (var d = 1; d <= depth; d++) {
           for (var dd = 1; dd <= depth2; dd++) {
             t4.setItem(l, w, d, dd,
-                t4.itemAt(l, w, d, dd) + other.itemAt(l, w, d, dd));
+                t4.itemAt(l, w, d, dd) + other!.itemAt(l, w, d, dd));
           }
         }
       }
@@ -155,8 +155,8 @@ class Tensor4 extends TensorBase {
   ///
   /// Otherwise returns `null`.
   @override
-  Tensor4 operator *(Object other) {
-    Tensor4 m;
+  Tensor4? operator *(Object other) {
+    Tensor4? m;
     if (other is num) {
       m = copy().map((v) => v * other);
     } else if (other is Tensor4) {
@@ -173,15 +173,15 @@ class Tensor4 extends TensorBase {
       }
       m = t4;
     } else if (other is Number) {
-      m = copy().map((v) => v * other.data);
+      m = copy().map((v) => v * other.data!);
     }
     return m;
   }
 
   /// Divide this tensor by number of by [other]
   @override
-  Tensor4 operator /(Object other) {
-    Tensor4 m;
+  Tensor4? operator /(Object other) {
+    Tensor4? m;
     if (other is num) {
       if (other == 0) {
         throw DivisionByZeroException();
@@ -191,7 +191,7 @@ class Tensor4 extends TensorBase {
       if (other.data == 0) {
         throw DivisionByZeroException();
       }
-      m = this * (1 / other.data);
+      m = this * (1 / other.data!);
     }
     return m;
   }
@@ -201,7 +201,7 @@ class Tensor4 extends TensorBase {
       other is Tensor4 && hashCode == other.hashCode;
 
   @override
-  int get hashCode => hashObjects(_data);
+  int get hashCode => hashObjects(_data!);
 
   @override
   List<num> toList() {

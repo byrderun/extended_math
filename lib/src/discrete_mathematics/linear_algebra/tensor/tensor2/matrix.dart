@@ -25,15 +25,15 @@ class Matrix extends TensorBase {
   /// identity matrix, otherwise matrix will have all values defaults to 0.
   Matrix.generate(int rows, int cols,
       {bool fillRandom = false, bool identity = false})
-      : _data = <List<num>>[],
+      : _data = <List<num?>>[],
         super(2) {
     if (fillRandom == true) {
       for (var j = 0; j < rows; j++) {
-        _data.add(NumbersGenerator().doubleIterableSync().take(cols).toList());
+        _data!.add(NumbersGenerator().doubleIterableSync().take(cols).toList());
       }
     } else {
       for (var i = 0; i < rows; i++) {
-        final emptyRow = <num>[];
+        final emptyRow = <num?>[];
         for (var j = 0; j < cols; j++) {
           emptyRow.add(0);
         }
@@ -42,7 +42,7 @@ class Matrix extends TensorBase {
           emptyRow[i] = 1;
         }
 
-        _data.add(emptyRow);
+        _data!.add(emptyRow);
       }
     }
   }
@@ -52,10 +52,10 @@ class Matrix extends TensorBase {
       Matrix.generate(rows, cols, identity: true);
 
   /// Raw data of matrix
-  final List<List<num>> _data;
+  final List<List<num?>>? _data;
 
   @override
-  List<List<num>> get data => _data.map((r) => r.toList()).toList();
+  List<List<num?>> get data => _data!.map((r) => r.toList()).toList();
 
   @override
   Map<String, int> get shape => <String, int>{'width': columns, 'length': rows};
@@ -72,17 +72,17 @@ class Matrix extends TensorBase {
   /// Gets number at specified [row] and [column]
   ///
   /// [row] and [column] are in range from 1 to end inclusively.
-  num itemAt(int row, int column) => data[row - 1][column - 1];
+  num? itemAt(int row, int column) => data[row - 1][column - 1];
 
   /// Set number to specified [value], replace old value if exist
   ///
   /// [row] and [column] are in range from 1 to end inclusively.
-  void setItem(int row, int column, num value) =>
-      _data[row - 1][column - 1] = value;
+  void setItem(int row, int column, num? value) =>
+      _data![row - 1][column - 1] = value;
 
   /// Gets specified column in range from 1 to end inclusively.
-  List<num> columnAt(int number) {
-    final col = <num>[];
+  List<num?> columnAt(int number) {
+    final col = <num?>[];
 
     for (final row in data) {
       col.add(row[number - 1]);
@@ -92,20 +92,20 @@ class Matrix extends TensorBase {
   }
 
   /// Gets specified row in range from 1 to end inclusively.
-  List<num> rowAt(int number) => data[number - 1].toList();
+  List<num?> rowAt(int number) => data[number - 1].toList();
 
   /// Removes specified row
   ///
   /// [row] sould be in range from 1 to end inclusively.
-  List<num> removeRow(int row) => _data.removeAt(row - 1);
+  List<num?> removeRow(int row) => _data!.removeAt(row - 1);
 
   /// Removes specified column
   ///
   /// [column] sould be in range from 1 to end inclusively.
-  List<num> removeColumn(int column) {
-    final removedColumn = <num>[];
+  List<num?> removeColumn(int column) {
+    final removedColumn = <num?>[];
     for (var i = 1; i <= rows; i++) {
-      removedColumn.add(_data[i - 1].removeAt(column - 1));
+      removedColumn.add(_data![i - 1].removeAt(column - 1));
     }
     return removedColumn;
   }
@@ -126,7 +126,7 @@ class Matrix extends TensorBase {
           resultTmp.clear();
 
           for (var j = 0; j < columns; j++) {
-            resultTmp.add(row[j] * mCol[j]);
+            resultTmp.add(row[j]! * mCol[j]!);
           }
 
           result.add(resultTmp.reduce((f, s) => f + s));
@@ -150,7 +150,7 @@ class Matrix extends TensorBase {
       final m = Matrix.generate(rows, columns);
       for (var i = 1; i <= rows; i++) {
         for (var j = 1; j <= columns; j++) {
-          m.setItem(i, j, itemAt(i, j) * matrix.itemAt(i, j));
+          m.setItem(i, j, itemAt(i, j)! * matrix.itemAt(i, j)!);
         }
       }
       return m;
@@ -179,7 +179,7 @@ class Matrix extends TensorBase {
       final newMatrix = Matrix.generate(rows, columns);
       for (var r = 1; r <= rows; r++) {
         for (var c = 1; c <= columns; c++) {
-          newMatrix.setItem(r, c, itemAt(r, c) + vector.itemAt(c));
+          newMatrix.setItem(r, c, itemAt(r, c)! + vector.itemAt(c)!);
         }
       }
       return this + newMatrix;
@@ -192,18 +192,18 @@ class Matrix extends TensorBase {
   /// Replaces row with given [newRow] at the specified [index]
   ///
   /// [index] is in range from 1 to end of matrix including.
-  void replaceRow(int index, List<num> newRow) {
+  void replaceRow(int index, List<num?> newRow) {
     if (newRow.length != columns) {
       throw MatrixException(
           'Needed $columns items in row, but found ${newRow.length}');
     }
-    _data[index - 1] = newRow;
+    _data![index - 1] = newRow;
   }
 
   /// Replaces column with given [newColumn] at the specified [index]
   ///
   /// [index] is in range from 1 to end of matrix including.
-  void replaceColumn(int index, List<num> newColumn) {
+  void replaceColumn(int index, List<num?> newColumn) {
     if (newColumn.length != rows) {
       throw MatrixException(
           'Needed $rows items in row, but found ${newColumn.length}');
@@ -215,13 +215,13 @@ class Matrix extends TensorBase {
   }
 
   /// Appends [row] to the end of this matrix
-  void appendRow(List<num> row) {
+  void appendRow(List<num?> row) {
     if (row.length != columns) {
       throw MatrixException(
           'Needed $columns items in row, but found ${row.length}');
     }
 
-    _data.add(row);
+    _data!.add(row);
   }
 
   /// Appends [column] to the end of this matrix
@@ -232,7 +232,7 @@ class Matrix extends TensorBase {
     }
 
     for (var i = 1; i <= rows; i++) {
-      _data[i - 1].add(column[i - 1]);
+      _data![i - 1].add(column[i - 1]);
     }
   }
 
@@ -287,7 +287,7 @@ class Matrix extends TensorBase {
 
   /// Gets main diagonal of this matrix
   Vector mainDiagonal() {
-    final data = <num>[];
+    final data = <num?>[];
     for (var i = 1; i <= rows; i++) {
       for (var j = 1; j <= columns; j++) {
         if (i == j) {
@@ -300,7 +300,7 @@ class Matrix extends TensorBase {
 
   /// Gets collateral diagonal of this matrix
   Vector collateralDiagonal() {
-    final data = <num>[];
+    final data = <num?>[];
     var counter = columns;
 
     for (var i = 1; i <= rows; i++) {
@@ -394,9 +394,9 @@ class Matrix extends TensorBase {
         }
 
         final diff =
-            eliminatedMatrix.itemAt(j, i) / eliminatedMatrix.itemAt(i, i);
+            eliminatedMatrix.itemAt(j, i)! / eliminatedMatrix.itemAt(i, i)!;
 
-        final tmpRow = Vector(choosedRow).map((v) => v * -diff) +
+        final tmpRow = Vector(choosedRow).map((v) => v! * -diff) +
             Vector(eliminatedMatrix.rowAt(j));
 
         eliminatedMatrix.replaceRow(j, tmpRow.data);
@@ -416,7 +416,7 @@ class Matrix extends TensorBase {
   num trace() {
     var sum = 0.0;
     for (final item in mainDiagonal().data) {
-      sum += item;
+      sum += item!;
     }
     return sum;
   }
@@ -449,9 +449,9 @@ class Matrix extends TensorBase {
     final v = SquareMatrix.generate(n).data;
 
     // array for internal storage of singular values
-    final s = List<num>(min(m + 1, n));
-    final e = List<num>(n);
-    final work = List<num>(m);
+    final s = List<num?>(min(m + 1, n));
+    final e = List<num?>(n);
+    final work = List<num?>(m);
     bool wantu = true;
     bool wantv = true;
 
@@ -467,18 +467,18 @@ class Matrix extends TensorBase {
         // Compute 2-norm of k-th column without under/overflow.
         s[k] = 0;
         for (int i = k; i < m; i++) {
-          s[k] = hypot(s[k], a[i][k]);
+          s[k] = hypot(s[k]!, a[i][k]!);
         }
         if (s[k] != 0.0) {
-          if (a[k][k] < 0.0) {
-            s[k] = -s[k];
+          if (a[k][k]! < 0.0) {
+            s[k] = -s[k]!;
           }
           for (int i = k; i < m; i++) {
-            a[i][k] /= s[k];
+            a[i][k] /= s[k]!;
           }
           a[k][k] += 1.0;
         }
-        s[k] = -s[k];
+        s[k] = -s[k]!;
       }
       for (int j = k + 1; j < n; j++) {
         if ((k < nct) && (s[k] != 0.0)) {
@@ -486,11 +486,11 @@ class Matrix extends TensorBase {
 
           double t = 0;
           for (int i = k; i < m; i++) {
-            t += a[i][k] * a[i][j];
+            t += a[i][k]! * a[i][j]!;
           }
-          t = -t / a[k][k];
+          t = -t / a[k][k]!;
           for (int i = k; i < m; i++) {
-            a[i][j] += t * a[i][k];
+            a[i][j] += t * a[i][k]!;
           }
         }
 
@@ -513,18 +513,18 @@ class Matrix extends TensorBase {
         // Compute 2-norm without under/overflow.
         e[k] = 0;
         for (int i = k + 1; i < n; i++) {
-          e[k] = hypot(e[k], e[i]);
+          e[k] = hypot(e[k]!, e[i]!);
         }
         if (e[k] != 0.0) {
-          if (e[k + 1] < 0.0) {
-            e[k] = -e[k];
+          if (e[k + 1]! < 0.0) {
+            e[k] = -e[k]!;
           }
           for (int i = k + 1; i < n; i++) {
-            e[i] /= e[k];
+            e[i] /= e[k]!;
           }
           e[k + 1] += 1.0;
         }
-        e[k] = -e[k];
+        e[k] = -e[k]!;
         if ((k + 1 < m) && (e[k] != 0.0)) {
           // apply the transformation.
 
@@ -533,13 +533,13 @@ class Matrix extends TensorBase {
           }
           for (int j = k + 1; j < n; j++) {
             for (int i = k + 1; i < m; i++) {
-              work[i] += e[j] * a[i][j];
+              work[i] += e[j]! * a[i][j]!;
             }
           }
           for (int j = k + 1; j < n; j++) {
-            double t = -e[j] / e[k + 1];
+            double t = -e[j]! / e[k + 1]!;
             for (int i = k + 1; i < m; i++) {
-              a[i][j] += t * work[i];
+              a[i][j] += t * work[i]!;
             }
           }
         }
@@ -582,17 +582,17 @@ class Matrix extends TensorBase {
           for (int j = k + 1; j < nu; j++) {
             double t = 0;
             for (int i = k; i < m; i++) {
-              t += u[i][k] * u[i][j];
+              t += u[i][k]! * u[i][j]!;
             }
-            t = -t / u[k][k];
+            t = -t / u[k][k]!;
             for (int i = k; i < m; i++) {
-              u[i][j] += t * u[i][k];
+              u[i][j] += t * u[i][k]!;
             }
           }
           for (int i = k; i < m; i++) {
-            u[i][k] = -u[i][k];
+            u[i][k] = -u[i][k]!;
           }
-          u[k][k] = 1.0 + u[k][k];
+          u[k][k] = 1.0 + u[k][k]!;
           for (int i = 0; i < k - 1; i++) {
             u[i][k] = 0.0;
           }
@@ -613,11 +613,11 @@ class Matrix extends TensorBase {
           for (int j = k + 1; j < nu; j++) {
             double t = 0;
             for (int i = k + 1; i < n; i++) {
-              t += v[i][k] * v[i][j];
+              t += v[i][k]! * v[i][j]!;
             }
-            t = -t / v[k + 1][k];
+            t = -t / v[k + 1][k]!;
             for (int i = k + 1; i < n; i++) {
-              v[i][j] += t * v[i][k];
+              v[i][j] += t * v[i][k]!;
             }
           }
         }
@@ -632,8 +632,8 @@ class Matrix extends TensorBase {
 
     int pp = p - 1;
     int iter = 0;
-    double eps = pow(2.0, -52.0);
-    double tiny = pow(2.0, -966.0);
+    double eps = pow(2.0, -52.0) as double;
+    double tiny = pow(2.0, -966.0) as double;
     while (p > 0) {
       int k, kase;
 
@@ -653,7 +653,7 @@ class Matrix extends TensorBase {
         if (k == -1) {
           break;
         }
-        if (e[k].abs() <= tiny + eps * (s[k].abs() + s[k + 1]).abs()) {
+        if (e[k]!.abs() <= tiny + eps * (s[k]!.abs() + s[k + 1]!).abs()) {
           e[k] = 0.0;
           break;
         }
@@ -666,9 +666,9 @@ class Matrix extends TensorBase {
           if (ks == k) {
             break;
           }
-          double t = (ks != p ? e[ks].abs() : 0.0) +
-              (ks != k + 1 ? e[ks - 1].abs() : 0.0);
-          if (s[ks].abs() <= tiny + eps * t) {
+          double t = (ks != p ? e[ks]!.abs() : 0.0) +
+              (ks != k + 1 ? e[ks - 1]!.abs() as double : 0.0);
+          if (s[ks]!.abs() <= tiny + eps * t) {
             s[ks] = 0.0;
             break;
           }
@@ -692,21 +692,21 @@ class Matrix extends TensorBase {
 
         case 1:
           {
-            double f = e[p - 2];
+            double? f = e[p - 2] as double?;
             e[p - 2] = 0.0;
             for (int j = p - 2; j >= k; j--) {
-              double t = hypot(s[j], f);
-              double cs = s[j] / t;
+              double t = hypot(s[j]!, f!) as double;
+              double cs = s[j]! / t;
               double sn = f / t;
               s[j] = t;
               if (j != k) {
-                f = -sn * e[j - 1];
-                e[j - 1] = cs * e[j - 1];
+                f = -sn * e[j - 1]!;
+                e[j - 1] = cs * e[j - 1]!;
               }
               if (wantv) {
                 for (int i = 0; i < n; i++) {
-                  t = cs * v[i][j] + sn * v[i][p - 1];
-                  v[i][p - 1] = -sn * v[i][j] + cs * v[i][p - 1];
+                  t = cs * v[i][j]! + sn * v[i][p - 1]!;
+                  v[i][p - 1] = -sn * v[i][j]! + cs * v[i][p - 1]!;
                   v[i][j] = t;
                 }
               }
@@ -718,19 +718,19 @@ class Matrix extends TensorBase {
 
         case 2:
           {
-            double f = e[k - 1];
+            double? f = e[k - 1] as double?;
             e[k - 1] = 0.0;
             for (int j = k; j < p; j++) {
-              double t = hypot(s[j], f);
-              double cs = s[j] / t;
+              double t = hypot(s[j]!, f!) as double;
+              double cs = s[j]! / t;
               double sn = f / t;
               s[j] = t;
-              f = -sn * e[j];
-              e[j] = cs * e[j];
+              f = -sn * e[j]!;
+              e[j] = cs * e[j]!;
               if (wantu) {
                 for (int i = 0; i < m; i++) {
-                  t = cs * u[i][j] + sn * u[i][k - 1];
-                  u[i][k - 1] = -sn * u[i][j] + cs * u[i][k - 1];
+                  t = cs * u[i][j]! + sn * u[i][k - 1]!;
+                  u[i][k - 1] = -sn * u[i][j]! + cs * u[i][k - 1]!;
                   u[i][j] = t;
                 }
               }
@@ -745,14 +745,14 @@ class Matrix extends TensorBase {
             // Calculate the shift.
 
             double scale = max(
-                max(max(max(s[p - 1].abs(), s[p - 2].abs()), e[p - 2].abs()),
-                    s[k].abs()),
-                e[k].abs());
-            double sp = s[p - 1] / scale;
-            double spm1 = s[p - 2] / scale;
-            double epm1 = e[p - 2] / scale;
-            double sk = s[k] / scale;
-            double ek = e[k] / scale;
+                max(max(max(s[p - 1]!.abs() as double, s[p - 2]!.abs() as double), e[p - 2]!.abs() as double),
+                    s[k]!.abs() as double),
+                e[k]!.abs() as double);
+            double sp = s[p - 1]! / scale;
+            double spm1 = s[p - 2]! / scale;
+            double epm1 = e[p - 2]! / scale;
+            double sk = s[k]! / scale;
+            double ek = e[k]! / scale;
             double b = ((spm1 + sp) * (spm1 - sp) + epm1 * epm1) / 2.0;
             double c = (sp * epm1) * (sp * epm1);
             double shift = 0.0;
@@ -769,35 +769,35 @@ class Matrix extends TensorBase {
             // Chase zeros.
 
             for (int j = k; j < p - 1; j++) {
-              double t = hypot(f, g);
+              double t = hypot(f, g) as double;
               double cs = f / t;
               double sn = g / t;
               if (j != k) {
                 e[j - 1] = t;
               }
-              f = cs * s[j] + sn * e[j];
-              e[j] = cs * e[j] - sn * s[j];
-              g = sn * s[j + 1];
-              s[j + 1] = cs * s[j + 1];
+              f = cs * s[j]! + sn * e[j]!;
+              e[j] = cs * e[j]! - sn * s[j]!;
+              g = sn * s[j + 1]!;
+              s[j + 1] = cs * s[j + 1]!;
               if (wantv) {
                 for (int i = 0; i < n; i++) {
-                  t = cs * v[i][j] + sn * v[i][j + 1];
-                  v[i][j + 1] = -sn * v[i][j] + cs * v[i][j + 1];
+                  t = cs * v[i][j]! + sn * v[i][j + 1]!;
+                  v[i][j + 1] = -sn * v[i][j]! + cs * v[i][j + 1]!;
                   v[i][j] = t;
                 }
               }
-              t = hypot(f, g);
+              t = hypot(f, g) as double;
               cs = f / t;
               sn = g / t;
               s[j] = t;
-              f = cs * e[j] + sn * s[j + 1];
-              s[j + 1] = -sn * e[j] + cs * s[j + 1];
-              g = sn * e[j + 1];
-              e[j + 1] = cs * e[j + 1];
+              f = cs * e[j]! + sn * s[j + 1]!;
+              s[j + 1] = -sn * e[j]! + cs * s[j + 1]!;
+              g = sn * e[j + 1]!;
+              e[j + 1] = cs * e[j + 1]!;
               if (wantu && (j < m - 1)) {
                 for (int i = 0; i < m; i++) {
-                  t = cs * u[i][j] + sn * u[i][j + 1];
-                  u[i][j + 1] = -sn * u[i][j] + cs * u[i][j + 1];
+                  t = cs * u[i][j]! + sn * u[i][j + 1]!;
+                  u[i][j + 1] = -sn * u[i][j]! + cs * u[i][j + 1]!;
                   u[i][j] = t;
                 }
               }
@@ -813,11 +813,11 @@ class Matrix extends TensorBase {
           {
             // Make the singular values positive.
 
-            if (s[k] <= 0.0) {
-              s[k] = (s[k] < 0.0 ? -s[k] : 0.0);
+            if (s[k]! <= 0.0) {
+              s[k] = (s[k]! < 0.0 ? -s[k]! : 0.0);
               if (wantv) {
                 for (int i = 0; i <= pp; i++) {
-                  v[i][k] = -v[i][k];
+                  v[i][k] = -v[i][k]!;
                 }
               }
             }
@@ -825,22 +825,22 @@ class Matrix extends TensorBase {
             // Order the singular values.
 
             while (k < pp) {
-              if (s[k] >= s[k + 1]) {
+              if (s[k]! >= s[k + 1]!) {
                 break;
               }
-              double t = s[k];
+              double? t = s[k] as double?;
               s[k] = s[k + 1];
               s[k + 1] = t;
               if (wantv && (k < n - 1)) {
                 for (int i = 0; i < n; i++) {
-                  t = v[i][k + 1];
+                  t = v[i][k + 1] as double?;
                   v[i][k + 1] = v[i][k];
                   v[i][k] = t;
                 }
               }
               if (wantu && (k < m - 1)) {
                 for (int i = 0; i < m; i++) {
-                  t = u[i][k + 1];
+                  t = u[i][k + 1] as double?;
                   u[i][k + 1] = u[i][k];
                   u[i][k] = t;
                 }
@@ -884,20 +884,20 @@ class Matrix extends TensorBase {
       for (var k = 1; k <= columns; k++) {
         var s = 0.0;
         for (var j = 1; j <= rows; j++) {
-          s += pow(a.itemAt(j, k), 2);
+          s += pow(a.itemAt(j, k)!, 2);
         }
         r.setItem(k, k, sqrt(s));
         for (var j = 1; j <= rows; j++) {
-          q.setItem(j, k, a.itemAt(j, k) / r.itemAt(k, k));
+          q.setItem(j, k, a.itemAt(j, k)! / r.itemAt(k, k)!);
         }
         for (var i = k + 1; i <= columns; i++) {
           var ss = 0.0;
           for (var j = 1; j <= rows; j++) {
-            ss += a.itemAt(j, i) * q.itemAt(j, k);
+            ss += a.itemAt(j, i)! * q.itemAt(j, k)!;
           }
           r.setItem(k, i, ss);
           for (var j = 1; j <= rows; j++) {
-            a.setItem(j, i, a.itemAt(j, i) - r.itemAt(k, i) * q.itemAt(j, k));
+            a.setItem(j, i, a.itemAt(j, i)! - r.itemAt(k, i)! * q.itemAt(j, k)!);
           }
         }
       }
@@ -912,17 +912,17 @@ class Matrix extends TensorBase {
   /// (vectors) are matrices (of given dimensions).
   ///
   /// If [q] is provided method computes `Lp,q norm`.
-  double norm(int p, [int q]) {
-    final matrix = map((v) => pow(v.abs(), p));
+  double norm(int p, [int? q]) {
+    final matrix = map((v) => pow(v!.abs(), p));
     if (q == null) {
-      return Number(matrix.reduce((f, s) => f + s)).rootOf(p).data;
+      return Number(matrix.reduce((f, s) => f! + s!)).rootOf(p).data;
     } else {
       var summ = Vector.generate(columns, (_) => 0);
       for (final item in matrix.data) {
         summ.insert(
-            Number(pow(item.reduce((f, s) => f + s), q)).rootOf(p).data);
+            Number(pow(item.reduce((f, s) => f! + s!)!, q)).rootOf(p).data);
       }
-      return Number(summ.reduce((f, s) => f + s)).rootOf(p).data;
+      return Number(summ.reduce((f, s) => f! + s!)).rootOf(p).data;
     }
   }
 
@@ -935,7 +935,7 @@ class Matrix extends TensorBase {
     for (var i = 1; i <= rows; i++) {
       num sum = 0;
       for (var j = 1; j <= columns; j++) {
-        sum += itemAt(i, j).abs(); // compute the row sum
+        sum += itemAt(i, j)!.abs(); // compute the row sum
       }
       if (sum > largest) {
         largest = sum; // found a new row sum
@@ -946,7 +946,7 @@ class Matrix extends TensorBase {
   }
 
   /// Computes spectral norm of this matrix
-  num spectralNorm() {
+  num? spectralNorm() {
     final singularValues = svd()['E'];
     return CentralTendency(singularValues).maximum();
   }
@@ -955,18 +955,18 @@ class Matrix extends TensorBase {
   /// the singular value decomposition of a matrix
   double condition() {
     final c = CentralTendency(svd()['E']);
-    return c.maximum() / c.minimum();
+    return c.maximum()! / c.minimum()!;
   }
 
   /// add values of [other] to corresponding values of this matrix
   ///
   /// The matrices should be of the same dimension.
   @override
-  Matrix operator +(Matrix other) {
+  Matrix operator +(Matrix? other) {
     final newMatrix = Matrix.generate(rows, columns);
     for (var i = 1; i <= rows; i++) {
       for (var j = 1; j <= columns; j++) {
-        newMatrix.setItem(i, j, itemAt(i, j) + other.itemAt(i, j));
+        newMatrix.setItem(i, j, itemAt(i, j)! + other!.itemAt(i, j)!);
       }
     }
     return newMatrix;
@@ -979,7 +979,7 @@ class Matrix extends TensorBase {
   Matrix operator -(Matrix other) => this + -other;
 
   @override
-  Matrix operator -() => map((v) => -v);
+  Matrix operator -() => map((v) => -v!);
 
   /// Multiply this matrix by [other]
   ///
@@ -990,14 +990,14 @@ class Matrix extends TensorBase {
   ///
   /// Otherwise returns `null`.
   @override
-  Matrix operator *(Object other) {
-    Matrix m;
+  Matrix? operator *(Object other) {
+    Matrix? m;
     if (other is num) {
-      m = copy().map((v) => v * other);
+      m = copy().map((v) => v! * other);
     } else if (other is Matrix) {
       m = hadamard(other);
     } else if (other is Number) {
-      m = copy().map((v) => v * other.data);
+      m = copy().map((v) => v! * other.data!);
     }
     return m;
   }
@@ -1005,8 +1005,8 @@ class Matrix extends TensorBase {
   /// Divide this matrix by number of by [other] matrix
   /// if `this` matrix and [other] are square matrix.
   @override
-  Matrix operator /(Object other) {
-    Matrix m;
+  Matrix? operator /(Object other) {
+    Matrix? m;
     if (other is num) {
       if (other == 0) {
         throw DivisionByZeroException();
@@ -1018,7 +1018,7 @@ class Matrix extends TensorBase {
       if (other.data == 0) {
         throw DivisionByZeroException();
       }
-      m = this * (1 / other.data);
+      m = this * (1 / other.data!);
     }
     return m;
   }
@@ -1031,12 +1031,12 @@ class Matrix extends TensorBase {
   int get hashCode => hashObjects(data);
 
   @override
-  Matrix map(num Function(num number) f) =>
+  Matrix map(num Function(num? number) f) =>
       Matrix(data.map((row) => row.map(f).toList()).toList());
 
   @override
-  num reduce(num Function(num prev, num next) f) {
-    var list = <num>[];
+  num? reduce(num Function(num? prev, num? next) f) {
+    var list = <num?>[];
     for (final row in data) {
       list = list.followedBy(row).toList();
     }
@@ -1044,8 +1044,8 @@ class Matrix extends TensorBase {
   }
 
   @override
-  bool every(bool Function(num number) f) {
-    var list = <num>[];
+  bool every(bool Function(num? number) f) {
+    var list = <num?>[];
     for (final row in data) {
       list = list.followedBy(row).toList();
     }
@@ -1053,8 +1053,8 @@ class Matrix extends TensorBase {
   }
 
   @override
-  bool any(bool Function(num number) f) {
-    var list = <num>[];
+  bool any(bool Function(num? number) f) {
+    var list = <num?>[];
     for (final row in data) {
       list = list.followedBy(row).toList();
     }
@@ -1062,8 +1062,8 @@ class Matrix extends TensorBase {
   }
 
   @override
-  List<num> toList() {
-    var list = <num>[];
+  List<num?> toList() {
+    var list = <num?>[];
     for (final row in data) {
       list = list.followedBy(row).toList();
     }

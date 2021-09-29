@@ -10,7 +10,7 @@ class Dispersion {
   ///
   /// By default means that all values have an equal propabilities if
   /// it isn't so, you can provide your own.
-  Dispersion(this._values, {TensorBase probabilities})
+  Dispersion(this._values, {TensorBase? probabilities})
       : _probabilities = probabilities ??
             TensorBase.generate(_values.shape, (_) => 1 / _values.itemsCount);
 
@@ -28,7 +28,7 @@ class Dispersion {
 
   /// Computes expected value for all possible [values] of a random number
   /// for finite case with its probabilities
-  double expectedValue() => (values * probabilities).reduce((f, s) => f + s);
+  double? expectedValue() => (values * probabilities)!.reduce((f, s) => f! + s!) as double?;
 
   /// Computes `population` or `sample` [type]s of standard deviation of
   /// [values]
@@ -42,12 +42,12 @@ class Dispersion {
     switch (type) {
       case 'sample':
         final summ =
-            (values.map((v) => pow(v - mu, 2))).reduce((f, s) => f + s);
+            (values.map((v) => pow(v! - mu!, 2))).reduce((f, s) => f! + s!)!;
         return summ / (values.itemsCount - 1);
       default:
-        final summ = (values.map((v) => pow(v, 2)) * probabilities)
-            .reduce((f, s) => f + s);
-        return summ - pow(mu, 2);
+        final summ = (values.map((v) => pow(v!, 2)) * probabilities)!
+            .reduce((f, s) => f! + s!)!;
+        return summ - (pow(mu!, 2) as double);
     }
   }
 
@@ -61,6 +61,6 @@ class Dispersion {
   ///     1. three
   num iqr({String method = 'one'}) {
     final q = Quartile(_values, method: method);
-    return q.third - q.first;
+    return q.third! - q.first!;
   }
 }

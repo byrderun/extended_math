@@ -10,7 +10,7 @@ class Integer extends Number {
   const Integer(int value) : super(value);
 
   @override
-  int get data => super.data.toInt();
+  int get data => super.data!.toInt();
 
   /// Gets unique prime numbers of this number
   Set<int> factorizate() {

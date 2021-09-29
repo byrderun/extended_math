@@ -5,11 +5,11 @@ homepage: https://github.com/YevhenKap/extended_math
 license: MIT
 
 environment:
-  sdk: '>=2.2.0 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   meta: ^1.1.8
-  quiver: ^2.1.2
+  quiver: ^3.0.1
 
 dev_dependencies:
   test: ^1.5.3

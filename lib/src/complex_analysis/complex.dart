@@ -14,34 +14,34 @@ class Complex with CopyableMixin<Complex> {
   const Complex({this.re = 0, this.im = 0});
 
   /// Real part of i
-  final num re;
+  final num? re;
 
   /// Imaginary part of i
   final num im;
 
   /// Module of this
-  num get module => Vector(<num>[re, im]).length;
+  num? get module => Vector(<num?>[re, im]).length;
 
   /// Argument of this (angle of the radius Oz, where z is this)
   num get argument {
-    if (re >= 0) {
-      return m.atan(im / re);
+    if (re! >= 0) {
+      return m.atan(im / re!);
     } else {
-      return m.atan(im / re) + m.pi;
+      return m.atan(im / re!) + m.pi;
     }
   }
 
   /// Add this to another [other]
   ///
   /// [other] can be either number or complex number.
-  Complex operator +(Object other) {
-    Complex c;
+  Complex? operator +(Object other) {
+    Complex? c;
     if (other is num) {
-      c = Complex(re: re + other, im: im);
+      c = Complex(re: re! + other, im: im);
     } else if (other is Complex) {
-      c = Complex(re: re + other.re, im: im + other.im);
+      c = Complex(re: re! + other.re!, im: im + other.im);
     } else if (other is Number) {
-      c = Complex(re: re + other.toDouble(), im: im);
+      c = Complex(re: re! + other.toDouble(), im: im);
     }
     return c;
   }
@@ -49,12 +49,12 @@ class Complex with CopyableMixin<Complex> {
   /// Subtract [other] from this
   ///
   /// [other] can be either number or complex number.
-  Complex operator -(Object other) {
-    Complex c;
+  Complex? operator -(Object other) {
+    Complex? c;
     if (other is Complex) {
       c = this + -other;
     } else if (other is num) {
-      c = Complex(re: re - other, im: im);
+      c = Complex(re: re! - other, im: im);
     } else if (other is Number) {
       c = this + -other;
     }
@@ -62,24 +62,24 @@ class Complex with CopyableMixin<Complex> {
   }
 
   /// Unary minus of this
-  Complex operator -() => Complex(re: -re, im: -im);
+  Complex operator -() => Complex(re: -re!, im: -im);
 
   /// Multiply this i by [other]
   ///
   /// [other] can be either number or complex number.
-  Complex operator *(Object other) {
-    Complex c;
+  Complex? operator *(Object other) {
+    Complex? c;
     if (other is num) {
-      final newRe = re * other;
+      final newRe = re! * other;
       final newIm = im * other;
       c = Complex(re: newRe, im: newIm);
     } else if (other is Complex) {
-      final newRe = re * other.re - im * other.im;
-      final newIm = re * other.im + im * other.re;
+      final newRe = re! * other.re! - im * other.im;
+      final newIm = re! * other.im + im * other.re!;
       c = Complex(re: newRe, im: newIm);
     } else if (other is Number) {
-      final newRe = re * other.toDouble();
-      final newIm = im * other.toDouble();
+      final num newRe = re! * other.toDouble();
+      final num newIm = im * other.toDouble();
       c = Complex(re: newRe, im: newIm);
     }
     return c;
@@ -88,18 +88,18 @@ class Complex with CopyableMixin<Complex> {
   /// Divide this i by [other]
   ///
   /// [other] can be either number or complex number.
-  Complex operator /(Object other) {
-    Complex c;
+  Complex? operator /(Object? other) {
+    Complex? c;
     if (other is num) {
       final down = m.pow(other, 2);
-      final newRe = (re * other) / down;
+      final newRe = (re! * other) / down;
       final newIm = (im * other) / down;
       c = Complex(re: newRe, im: newIm);
     } else if (other is Complex) {
       c = this * other.conjugate();
     } else if (other is Number) {
       final down = m.pow(other.toDouble(), 2);
-      final newRe = (re * other.toDouble()) / down;
+      final newRe = (re! * other.toDouble()) / down;
       final newIm = (im * other.toDouble()) / down;
       c = Complex(re: newRe, im: newIm);
     }
@@ -109,11 +109,11 @@ class Complex with CopyableMixin<Complex> {
   /// Gets power of this by [power]
   ///
   /// Accept only integer number in range of `-Infinite` to `Infinite`.
-  Complex pow(int power) {
+  Complex? pow(int power) {
     if (power == 0) {
       return Complex(re: 1);
     }
-    var tmpI = copy();
+    Complex? tmpI = copy();
 
     for (var i = 1; i < power.abs(); i++) {
       tmpI *= this;
@@ -137,7 +137,7 @@ class Complex with CopyableMixin<Complex> {
     }
 
     // final rootModule = m.pow(module, 1 / root);
-    final rootModule = Double(module).rootOf(root).toDouble();
+    final rootModule = Double(module as double?).rootOf(root).toDouble();
 
     for (var i = 0; i < root; i++) {
       final newRe = m.cos((argument + 2 * argument * i) / root) * rootModule;
@@ -150,15 +150,15 @@ class Complex with CopyableMixin<Complex> {
 
   /// Return conjugate complex number `(1 / this)`
   Complex conjugate() {
-    final denominator = m.pow(re, 2) + m.pow(im, 2);
-    return Complex(re: re / denominator, im: -im / denominator);
+    final denominator = m.pow(re!, 2) + m.pow(im, 2);
+    return Complex(re: re! / denominator, im: -im / denominator);
   }
 
   /// Checks if this complex number have only real part
   bool isReal() => im == 0;
 
   /// Converts this complex number to real number if it have only real part
-  num toReal() {
+  num? toReal() {
     if (isReal()) {
       return re;
     } else {

@@ -19,10 +19,10 @@ class Vector extends TensorBase {
       TensorBase.generate(<String, int>{'width': length}, generator).toVector();
 
   /// Data for vector
-  final List<num> _data;
+  final List<num?>? _data;
 
   @override
-  List<num> get data => _data.toList();
+  List<num?> get data => _data!.toList();
 
   @override
   Map<String, int> get shape => <String, int>{'width': itemsCount};
@@ -31,12 +31,12 @@ class Vector extends TensorBase {
   int get itemsCount => data.length;
 
   /// Gets length of this vector
-  num get length => euclideanNorm();
+  num? get length => euclideanNorm();
 
   /// Gets number at specified [index]
   ///
   /// [index] is in range from 1 to end inclusively.
-  num itemAt(int index) => data[index - 1];
+  num? itemAt(int index) => data[index - 1];
 
   /// Inserts item to specified [position]
   ///
@@ -54,23 +54,23 @@ class Vector extends TensorBase {
   /// print(v); // [1, 2, 3, 4]
   /// ```
   void insert(num item, {int position = 1, bool replace = true}) =>
-      replace ? _data[position - 1] = item : _data.insert(position - 1, item);
+      replace ? _data![position - 1] = item : _data!.insert(position - 1, item);
 
   /// Sets item to end of this [Vector]
-  void add(num item) => _data.add(item);
+  void add(num item) => _data!.add(item);
 
   /// Gets norm of vector alse known as vector's length
   ///
   /// [p] should have only integer value, if not - any fractional digits will
   /// be discarded.
-  num norm(double p) {
+  num? norm(double p) {
     final n = p.truncateToDouble();
     if (n <= 0) {
       throw VectorException('P must be greater or equal to 1! Given $p.');
     } else if (n.isInfinite) {
       var res = itemAt(1);
       for (final i in data) {
-        if (res < i) {
+        if (res! < i!) {
           res = i;
         }
       }
@@ -78,30 +78,30 @@ class Vector extends TensorBase {
     } else {
       var sum = 0.0;
       for (final item in data) {
-        sum += pow(item, n);
+        sum += pow(item!, n);
       }
       return pow(sum, 1 / n);
     }
   }
 
   /// Gets Euclidean norm
-  num euclideanNorm() => norm(2);
+  num? euclideanNorm() => norm(2);
 
   /// Gets the norm where p is infinite
-  num maxNorm() => norm(double.infinity);
+  num? maxNorm() => norm(double.infinity);
 
   /// Multiply this vector by [vector] using dot product algorithm
-  num dot(Vector vector) =>
+  num? dot(Vector vector) =>
       toMatrixRow().matrixProduct(vector.toMatrixColumn()).itemAt(1, 1);
 
   /// Converts this vector to matrix with one column
   Matrix toMatrixColumn() {
-    final matrix = data.map((value) => <num>[value]).toList();
+    final matrix = data.map((value) => <num?>[value]).toList();
     return Matrix(matrix);
   }
 
   /// Convert this vector to martix with one row
-  Matrix toMatrixRow() => Matrix(<List<num>>[data]);
+  Matrix toMatrixRow() => Matrix(<List<num?>>[data]);
 
   /// Gets cross product of this vector and another [vector]
   ///
@@ -109,9 +109,9 @@ class Vector extends TensorBase {
   /// [itemsCount] of both vectors must be equal to 3.
   Vector cross(Vector vector) {
     if (itemsCount == 3 && vector.itemsCount == 3) {
-      final v = <num>[];
+      final v = <num?>[];
       for (var i = 1; i <= 3; i++) {
-        final m = SquareMatrix(<List<num>>[
+        final m = SquareMatrix(<List<num?>>[
           <num>[1, 1, 1],
           data,
           vector.data
@@ -135,27 +135,27 @@ class Vector extends TensorBase {
   /// If [degrees] is true - result will have the degrees unit.
   double angleBetween(Vector vector, {bool degrees = false}) {
     final dotProduct = dot(vector);
-    final magnitudes = euclideanNorm() * vector.euclideanNorm();
+    final magnitudes = euclideanNorm()! * vector.euclideanNorm()!;
     if (degrees == false) {
-      return acos(dotProduct / magnitudes);
+      return acos(dotProduct! / magnitudes);
     } else {
       // Cast from radians to degrees
       // 1 rad = 57.295779513 degrees.
-      return acos(dotProduct / magnitudes) * 57.295779513;
+      return acos(dotProduct! / magnitudes) * 57.295779513;
     }
   }
 
   /// Gets subvector from this [Vector]
   ///
   /// [start] and [end] may be in range from 1 to end inclusively.
-  Vector subvector(int start, [int end]) =>
+  Vector subvector(int start, [int? end]) =>
       Vector(data.sublist(start - 1, end != null ? end : null));
 
   /// Gets Hadamard product of vectors
   Vector hadamard(Vector vector) {
     final data = <num>[];
     for (var i = 1; i <= itemsCount; i++) {
-      data.add(itemAt(i) * vector.itemAt(i));
+      data.add(itemAt(i)! * vector.itemAt(i)!);
     }
     return Vector(data);
   }
@@ -171,21 +171,21 @@ class Vector extends TensorBase {
       isOrthogonalTo(vector) && isUnit() && vector.isUnit();
 
   @override
-  Vector operator *(Object other) {
-    Vector v;
+  Vector? operator *(Object other) {
+    Vector? v;
     if (other is num) {
-      v = map((v) => v * other);
+      v = map((v) => v! * other);
     } else if (other is Vector) {
       v = hadamard(other);
     } else if (other is Number) {
-      v = map((v) => v * other.toDouble());
+      v = map((v) => v! * other.toDouble());
     }
     return v;
   }
 
   @override
-  Vector operator /(Object other) {
-    Vector v;
+  Vector? operator /(Object other) {
+    Vector? v;
     if (other is num) {
       if (other == 0) {
         throw DivisionByZeroException();
@@ -201,26 +201,26 @@ class Vector extends TensorBase {
   }
 
   @override
-  Vector operator -() => map((v) => -v);
+  Vector operator -() => map((v) => -v!);
 
   /// Gets item of this [Vector] at the specified [index]
   ///
   /// [index] starts from `0` to `length - 1`. The same range have
   /// core [List].
-  num operator [](int index) => data[index];
+  num? operator [](int index) => data[index];
 
   /// Sets [value] to this [Vector] at the specified [index]
   ///
   /// [index] starts from `0` to `length - 1`. The same range have
   /// core [List].
-  void operator []=(int index, num value) => _data[index] = value;
+  void operator []=(int index, num value) => _data![index] = value;
 
   @override
   Vector operator +(Vector other) {
     if (itemsCount == other.itemsCount) {
       final tmpData = <num>[];
       for (var i = 1; i <= itemsCount; i++) {
-        tmpData.add(itemAt(i) + other.itemAt(i));
+        tmpData.add(itemAt(i)! + other.itemAt(i)!);
       }
       return Vector(tmpData);
     } else {
@@ -232,19 +232,19 @@ class Vector extends TensorBase {
   Vector operator -(Vector other) => this + -other;
 
   @override
-  Vector map(num Function(num number) f) => Vector(data.map(f).toList());
+  Vector map(num Function(num? number) f) => Vector(data.map(f).toList());
 
   @override
-  num reduce(num Function(num prev, num next) f) => data.reduce(f);
+  num? reduce(num Function(num? prev, num? next) f) => data.reduce(f);
 
   @override
-  bool every(bool Function(num number) f) => data.every(f);
+  bool every(bool Function(num? number) f) => data.every(f);
 
   @override
-  bool any(bool Function(num number) f) => data.any(f);
+  bool any(bool Function(num? number) f) => data.any(f);
 
   @override
-  List<num> toList() => data;
+  List<num?> toList() => data;
 
   @override
   bool operator ==(Object other) =>

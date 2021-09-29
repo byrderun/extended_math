@@ -19,23 +19,23 @@ class Tensor3 extends TensorBase {
               generator)
           .toTensor3();
 
-  final List<List<List<num>>> _data;
+  final List<List<List<num>>>? _data;
 
   /// Gets width (columns) of this tensor
-  int get width => _data[0].length;
+  int get width => _data![0].length;
 
   /// Gets length (rows) of this tensor
-  int get length => _data.length;
+  int get length => _data!.length;
 
   /// Gets depth of this tensor
-  int get depth => _data[0][0].length;
+  int get depth => _data![0][0].length;
 
   @override
   int get itemsCount => width * length * depth;
 
   @override
   List<List<List<num>>> get data =>
-      _data.map((r) => r.map((c) => c.toList()).toList()).toList();
+      _data!.map((r) => r.map((c) => c.toList()).toList()).toList();
 
   @override
   Map<String, int> get shape =>
@@ -45,8 +45,8 @@ class Tensor3 extends TensorBase {
   ///
   /// [depthPosition] may be in range from 1 to end inclusively.
   Matrix matrixAt(int depthPosition) {
-    final data = <List<num>>[];
-    for (final row in _data) {
+    final List<List<num?>> data = <List<num>>[];
+    for (final row in _data!) {
       data.add(Matrix(row).columnAt(depthPosition));
     }
     return Matrix(data);
@@ -107,18 +107,18 @@ class Tensor3 extends TensorBase {
   ///
   /// All position may be in range from 1 to end inclusively.
   num setItem(int length, int width, int depth, num value) =>
-      _data[length - 1][width - 1][depth - 1] = value;
+      _data![length - 1][width - 1][depth - 1] = value;
 
   /// Add values of [other] to corresponding values of this tensor
   ///
   /// The tensors should be of the same dimension.
   @override
-  Tensor3 operator +(Tensor3 other) {
+  Tensor3 operator +(Tensor3? other) {
     final t3 = copy();
     for (var l = 1; l <= length; l++) {
       for (var w = 1; w <= width; w++) {
         for (var d = 1; d <= depth; d++) {
-          t3.setItem(l, w, d, t3.itemAt(l, w, d) + other.itemAt(l, w, d));
+          t3.setItem(l, w, d, t3.itemAt(l, w, d) + other!.itemAt(l, w, d));
         }
       }
     }
@@ -143,8 +143,8 @@ class Tensor3 extends TensorBase {
   ///
   /// Otherwise returns `null`.
   @override
-  Tensor3 operator *(Object other) {
-    Tensor3 m;
+  Tensor3? operator *(Object other) {
+    Tensor3? m;
     if (other is num) {
       m = copy().map((v) => v * other);
     } else if (other is Tensor3) {
@@ -158,15 +158,15 @@ class Tensor3 extends TensorBase {
       }
       m = t3;
     } else if (other is Number) {
-      m = copy().map((v) => v * other.data);
+      m = copy().map((v) => v * other.data!);
     }
     return m;
   }
 
   /// Divide this tensor by number of by [other]
   @override
-  Tensor3 operator /(Object other) {
-    Tensor3 m;
+  Tensor3? operator /(Object other) {
+    Tensor3? m;
     if (other is num) {
       if (other == 0) {
         throw DivisionByZeroException();
@@ -176,7 +176,7 @@ class Tensor3 extends TensorBase {
       if (other.data == 0) {
         throw DivisionByZeroException();
       }
-      m = this * (1 / other.data);
+      m = this * (1 / other.data!);
     }
     return m;
   }
@@ -186,7 +186,7 @@ class Tensor3 extends TensorBase {
       other is Tensor3 && hashCode == other.hashCode;
 
   @override
-  int get hashCode => hashObjects(_data);
+  int get hashCode => hashObjects(_data!);
 
   @override
   List<num> toList() {

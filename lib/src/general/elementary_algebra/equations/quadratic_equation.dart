@@ -20,10 +20,10 @@ class QuadraticEquation extends EquationBase {
   num a;
 
   /// [b] coefficient in quadratic equation
-  num b;
+  num? b;
 
   /// [c] coefficient in quadratic equation
-  num c;
+  num? c;
 
   @override
   Map<String, Complex> calculate() {
@@ -32,13 +32,13 @@ class QuadraticEquation extends EquationBase {
 
     if (dis > 0) {
       for (var i = 1; i <= 2; i++) {
-        result['x$i'] = Complex(re: (-b + pow(-1, i) * sqrt(dis)) / (2 * a));
+        result['x$i'] = Complex(re: (-b! + pow(-1, i) * sqrt(dis)) / (2 * a));
       }
     } else if (dis == 0) {
-      result['x'] = Complex(re: -b / (2 * a));
+      result['x'] = Complex(re: -b! / (2 * a));
     } else {
       for (var i = 1; i <= 2; i++) {
-        final re = -b / (2 * a);
+        final re = -b! / (2 * a);
         final im = pow(-1, i) * sqrt(-dis) / (2 * a);
         result['x$i'] = Complex(re: re, im: im);
       }
@@ -47,10 +47,10 @@ class QuadraticEquation extends EquationBase {
   }
 
   @override
-  num discriminant() => pow(b, 2) - 4 * a * c;
+  num discriminant() => pow(b!, 2) - 4 * a * c!;
 
   @override
-  bool evaluate(num x, num equalTo) => (a * pow(x, 2) + b * x + c) == equalTo;
+  bool evaluate(num x, num equalTo) => (a * pow(x, 2) + b! * x + c!) == equalTo;
 
   @override
   String toString() => '${a}x^2 + ${b}x + $c';

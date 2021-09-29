@@ -61,31 +61,31 @@ class NewtonsMethod {
   }
 
   /// Counting Uppest limit for postive roots
-  num _upLimPlus(List<num> coefArray) {
+  num _upLimPlus(List<num?> coefArray) {
     // Finding max negative value
     num maxModul = 0;
     for (int i = 0; i < coefArray.length; i++) {
-      if (coefArray[i].abs() > maxModul) {
-        maxModul = coefArray[i].abs();
+      if (coefArray[i]!.abs() > maxModul) {
+        maxModul = coefArray[i]!.abs();
       }
     }
     // Finding first negative num index
     var check = true;
     num powerCoef = 0;
     for (var i = 0; i < coefArray.length; i++) {
-      if ((coefArray[i] < 0) && check) {
+      if ((coefArray[i]! < 0) && check) {
         powerCoef = i;
         check = false;
       }
     }
-    final underRoot = maxModul / coefArray[0];
+    final underRoot = maxModul / coefArray[0]!;
     final upLimP = 1 + pow(underRoot, 1.0 / powerCoef);
     return upLimP;
   }
 
   /// Counting Lowest limit for negative roots
   num lowerLimit() {
-    final helpArray = List<num>(_equationCoef.length);
+    final helpArray = List<num?>(_equationCoef.length);
     for (var i = 0; i < _equationCoef.length; i++) {
       if (_equationPower[i] % 2 == 0) {
         helpArray[i] = _equationCoef[i];
@@ -95,9 +95,9 @@ class NewtonsMethod {
     }
 
     // First polinom coef cshoul be positive
-    if (helpArray[0] < 0) {
+    if (helpArray[0]! < 0) {
       for (var j = 0; j < helpArray.length; j++) {
-        helpArray[j] = -helpArray[j];
+        helpArray[j] = -helpArray[j]!;
       }
     }
     return -_upLimPlus(helpArray);
@@ -112,13 +112,13 @@ class NewtonsMethod {
     final delta = (upLim.abs() + lowLim.abs()) / 100;
 
     var point1 = lowLim;
-    var point2 = lowLim + delta;
+    num point2 = lowLim + delta;
     var value1 = 0.0;
     var value2 = 0.0;
 
     while (point2 < upLim) {
-      value1 = _calcValue(point1);
-      value2 = _calcValue(point2);
+      value1 = _calcValue(point1) as double;
+      value2 = _calcValue(point2) as double;
       if ((value1 * value2) <= 0) {
         return <num>[point1, point2];
       }
@@ -163,7 +163,7 @@ class NewtonsMethod {
   /// Newton's algorithm for finding root from [point]
   num calculateFrom(num point) {
     var step = point;
-    var nextStep = point - _calcValue(point) / _calcDerivative(point);
+    num nextStep = point - _calcValue(point) / _calcDerivative(point);
     while ((nextStep - step).abs() > epsilon) {
       step = nextStep;
       nextStep = step - _calcValue(step) / _calcDerivative(step);

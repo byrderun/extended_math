@@ -25,7 +25,7 @@ class NumbersGenerator {
   ///
   /// Generates `integer` number in range [from] - [to] inclusively.
   /// [from] should be less than [to].
-  Iterable<int> intIterableSync({@required int to, int from = 0}) sync* {
+  Iterable<int> intIterableSync({required int to, int from = 0}) sync* {
     while (true) {
       yield nextInt(to, from: from);
     }
@@ -35,7 +35,7 @@ class NumbersGenerator {
   ///
   /// Generates `double` number in range [from] - [to] inclusively.
   /// [from] should be less than [to].
-  Iterable<double> doubleIterableSync({double from = 0, double to = 1}) sync* {
+  Iterable<double?> doubleIterableSync({double from = 0, double to = 1}) sync* {
     while (true) {
       yield nextDouble(from: from, to: to);
     }

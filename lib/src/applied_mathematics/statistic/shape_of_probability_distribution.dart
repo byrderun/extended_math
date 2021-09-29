@@ -27,7 +27,7 @@ class ShapeOfProbabilityDistribution {
   /// Computes the [degree]'s-th central moment of a [values]
   double moment(int degree) {
     final mean = CentralTendency(values).arithmetic();
-    return values.map((v) => pow(v - mean, degree)).reduce((f, s) => f + s) /
+    return values.map((v) => pow(v! - mean, degree)).reduce((f, s) => f! + s!)! /
         values.itemsCount;
   }
 

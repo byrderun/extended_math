@@ -22,18 +22,18 @@ class Quartile extends Quantile {
   String method;
 
   /// Gets `Q1` corresponding to [method]
-  num get first => all[0];
+  num? get first => all[0];
 
   /// Gets `Q2` corresponding to [method]
-  num get second => all[1];
+  num? get second => all[1];
 
   /// Gets `Q3` corresponding to [method]
-  num get third => all[2];
+  num? get third => all[2];
 
   /// Gets `Q1`, `Q2` and `Q3` corresponding to [method]
-  List<num> get all {
+  List<num?> get all {
     final listData = data.toList();
-    final result = <num>[CentralTendency(data).median()];
+    final result = <num?>[CentralTendency(data).median()];
 
     switch (method) {
       case 'two':
@@ -52,13 +52,13 @@ class Quartile extends Quantile {
         num third = 0;
 
         if (isFourPlusOne) {
-          first = listData[equalIndex - 1] * .75 + listData[equalIndex] * .25;
-          third = listData[3 * equalIndex] * .25 +
-              listData[3 * equalIndex + 1] * .75;
+          first = listData[equalIndex - 1]! * .75 + listData[equalIndex]! * .25;
+          third = listData[3 * equalIndex]! * .25 +
+              listData[3 * equalIndex + 1]! * .75;
         } else {
-          first = listData[equalIndex] * .75 + listData[equalIndex + 1] * .25;
-          third = listData[3 * equalIndex + 1] * .25 +
-              listData[3 * equalIndex + 2] * .75;
+          first = listData[equalIndex]! * .75 + listData[equalIndex + 1]! * .25;
+          third = listData[3 * equalIndex + 1]! * .25 +
+              listData[3 * equalIndex + 2]! * .75;
         }
 
         result
@@ -72,9 +72,9 @@ class Quartile extends Quantile {
   }
 
   /// Computes values for first and second [method]
-  List<num> _methodOneOrTwo() {
+  List<num?> _methodOneOrTwo() {
     final listData = data.toList();
-    final result = <num>[CentralTendency(data).median()];
+    final result = <num?>[CentralTendency(data).median()];
 
     final half = listData.length / 2;
 

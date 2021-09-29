@@ -14,13 +14,13 @@ class Number extends TensorBase {
   const Number(this._value) : super(0);
 
   /// Internal value of number
-  final num _value;
+  final num? _value;
 
   @override
   int get itemsCount => 1;
 
   @override
-  num get data => _value;
+  num? get data => _value;
 
   @override
   Map<String, int> get shape =>
@@ -29,7 +29,7 @@ class Number extends TensorBase {
   /// Gets nth root of this number
   ///
   /// [degree] may be only positive number.
-  Double rootOf(num degree) {
+  Double rootOf(num? degree) {
     if (_value == 0) {
       return Double(0);
     }
@@ -42,46 +42,46 @@ class Number extends TensorBase {
     var delta = -2147483647.0;
 
     while (-delta.abs() < -0.001) {
-      delta = (1 / degree) * (_value / pow(result, degree - 1) - result);
+      delta = (1 / degree!) * (_value! / pow(result!, degree - 1) - result);
       result += delta;
     }
-    return Double(result.toDouble());
+    return Double(result!.toDouble());
   }
 
   @override
   Number copy() => Number(_value);
 
   /// Truncates this [_value] to an integer and returns the result as an `int`
-  int toInt() => data.toInt();
+  int toInt() => data!.toInt();
 
   /// Returns the result as an `double`
-  double toDouble() => data.toDouble();
+  double toDouble() => data!.toDouble();
 
   /// Add this to [other]
   ///
   /// [other] can be either `num` or [Number].
   @override
-  Number operator +(Object other) {
-    Number n;
+  Number? operator +(Object? other) {
+    Number? n;
     if (other is num) {
-      n = Number(_value + other);
+      n = Number(_value! + other);
     } else if (other is Number) {
-      n = Number(_value + other.data);
+      n = Number(_value! + other.data!);
     }
     return n;
   }
 
   @override
-  Number operator -() => Number(-_value);
+  Number operator -() => Number(-_value!);
 
   /// Subtract [other] from this
   ///
   /// [other] can be either `num` or [Number].
   @override
-  Number operator -(Object other) {
-    Number n;
+  Number? operator -(Object other) {
+    Number? n;
     if (other is num) {
-      n = Number(_value - other);
+      n = Number(_value! - other);
     } else if (other is Number) {
       n = this + -other;
     }
@@ -92,12 +92,12 @@ class Number extends TensorBase {
   ///
   /// [other] can be either `num` or [Number].
   @override
-  Number operator *(Object other) {
-    Number n;
+  Number? operator *(Object other) {
+    Number? n;
     if (other is num) {
-      n = Number(_value * other);
+      n = Number(_value! * other);
     } else if (other is Number) {
-      n = Number(_value * other.data);
+      n = Number(_value! * other.data!);
     }
     return n;
   }
@@ -106,25 +106,25 @@ class Number extends TensorBase {
   ///
   /// [other] can be either `num` or [Number].
   @override
-  Double operator /(Object other) {
-    Double n;
+  Double? operator /(Object other) {
+    Double? n;
     if (other is num) {
       if (other == 0) {
         throw DivisionByZeroException();
       }
-      n = Double(_value / other);
+      n = Double(_value! / other);
     } else if (other is Number) {
       if (other.data == 0) {
         throw DivisionByZeroException();
       }
-      n = Double(_value / other.data);
+      n = Double(_value! / other.data!);
     }
     return n;
   }
 
   @override
   bool operator ==(Object other) {
-    bool result;
+    late bool result;
     if (other is num) {
       result = _value == other;
     } else if (other is Number) {
@@ -137,19 +137,19 @@ class Number extends TensorBase {
   int get hashCode => _value.hashCode;
 
   @override
-  Number map(num Function(num number) f) => Number(toList().map(f).single);
+  Number map(num Function(num? number) f) => Number(toList().map(f).single);
 
   @override
-  bool every(bool Function(num number) f) => toList().every(f);
+  bool every(bool Function(num? number) f) => toList().every(f);
 
   @override
-  bool any(bool Function(num number) f) => every(f);
+  bool any(bool Function(num? number) f) => every(f);
 
   @override
-  num reduce(num Function(num prev, num next) f) => toList().reduce(f);
+  num? reduce(num Function(num? prev, num? next) f) => toList().reduce(f);
 
   @override
-  List<num> toList() => <num>[_value];
+  List<num?> toList() => <num?>[_value];
 
   /// Converts this number to complex number
   Complex toComplex() => Complex(re: data);

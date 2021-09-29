@@ -8,7 +8,7 @@ class DiagonalMatrix extends SquareMatrix {
   /// Count of inner arrays must be equal to count of their elements!
   /// All elements of matrix except elements of main diagonal must
   /// be equal to zero!
-  DiagonalMatrix(List<List<num>> data) : super(data);
+  DiagonalMatrix(List<List<num?>> data) : super(data);
 
   /// Create identity matrix
   DiagonalMatrix.identity(int number) : super.identity(number);
@@ -31,7 +31,7 @@ class DiagonalMatrix extends SquareMatrix {
   DiagonalMatrix inverse() {
     final newData = data;
     for (var i = 1; i <= rows; i++) {
-      newData[i - 1][i - 1] = 1 / newData[i - 1][i - 1];
+      newData[i - 1][i - 1] = 1 / newData[i - 1][i - 1]!;
     }
     return DiagonalMatrix(newData).transpose().toDiagonalMatrix();
   }
