@@ -1,3 +1,5 @@
+Byrd fork of https://github.com/YevhenKap/extended_math - to update to sound null safety
+
 # Library that add functionality of all maths sections that don't exist in `dart:math`
 
 __Currently this library is under heavy development! I appreciate any help in implementing any functionality of any section and hope this library will be helpful for developers
